@@ -1,0 +1,13 @@
+{
+
+    "trailingComma": "none",
+    "tabWidth": 2,
+    "printWidth":100,
+    "singleQuote": true,
+    "overrides":[
+    {"files":"*.ts",
+    "options" :{
+        "parser": "typescript"
+    }}
+    ]
+}
