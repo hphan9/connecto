@@ -17,5 +17,7 @@ beforeEach(() => {
 
 // if email is not valid it is 412 _ semantic error
 it('Should return 422 if the email is not valid', async () => {
-  await request(app).post('/api/auth/signup').send({ something: 'something' }).expect(422);
+  await request(app).post('/api/auth/signup').send({}).expect(422);
+  await request(app).post('/api/auth/signup').send({ email: 'invalid' }).expect(422);
+  await request(app).post('/api/auth/signup').send({ email: 'emily@gmail.com' }).expect(200);
 });
