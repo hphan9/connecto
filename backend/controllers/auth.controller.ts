@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model";
 import { generateTokenAndSetCookie } from "../lib/utils/generateToken";
 import { validationResult } from "express-validator";
+// don't remove this line, it will cause compiler error
+import user from "../global";
 
 export const signup = async (req: Request, res: Response) => {
   try {
