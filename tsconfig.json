@@ -7,7 +7,8 @@
     "moduleResolution": "node",
     "outDir": "dist",
     "strict": true,
-    "target": "esnext"
+    "target": "esnext",
+    "typeRoots":["/backend/global.d.ts"]
   },
   "ts-node": {
         // Tell ts-node CLI to install the --loader automatically

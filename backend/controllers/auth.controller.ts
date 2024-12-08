@@ -2,9 +2,15 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "../models/user.model";
 import { generateTokenAndSetCookie } from "../lib/utils/generateToken";
+import { validationResult } from "express-validator";
 
 export const signup = async (req: Request, res: Response) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(422).send(errors);
+      return;
+    }
     const { fullName, username, email, password } = req.body;
 
     const existingUser = await User.findOne({ username });
@@ -96,6 +102,16 @@ export const logout = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.log(`Error log out user ${error}`);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    res.status(200).json({ user });
+  } catch (error) {
+    console.log(`Error in get me controller ${error}`);
     res.status(500).json({ error: "Server error" });
   }
 };

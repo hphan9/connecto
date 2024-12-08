@@ -1,9 +1,11 @@
 import express from "express";
-import { signup, login, logout } from "../controllers/auth.controller";
-import { body, validationResult } from "express-validator";
+import { signup, login, logout, getMe } from "../controllers/auth.controller";
+import { body } from "express-validator";
+import { protectRoute } from "../middleware/protectRoute";
 
 const authRoutes = express.Router();
 
+authRoutes.get("/me", protectRoute, getMe);
 authRoutes.post(
   "/signup",
   [
