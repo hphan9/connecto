@@ -1,7 +1,8 @@
 export {};
+// todo check the namespace again 
 declare global {
   namespace NodeJS {
-    interface ProcessEnv {
+   export interface ProcessEnv {
       NODE_ENV: string;
       PORT: string;
       MONGO_URI: string;
@@ -9,8 +10,8 @@ declare global {
     }
   }
   namespace Express {
-    export interface Request {
-      user: any;
-    }
-  }
+   export interface Request {
+     user: any;
+   }
+ }
 }
