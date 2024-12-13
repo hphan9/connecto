@@ -5,12 +5,19 @@ import {
   createPost,
   deletePost,
   getAllPosts,
+  getFollowingPosts,
+  getLikedPosts,
+  getUserPosts,
   likeUnlikePost,
 } from "../controllers/post.controller";
 import { body } from "express-validator";
 const router = express.Router();
 
 router.get("/all", protectRoute, getAllPosts);
+// get all post liked by user id in the params
+router.get("/likes/:id", protectRoute, getLikedPosts);
+router.get("/following", protectRoute, getFollowingPosts);
+router.get("/user/:username", protectRoute, getUserPosts);
 router.post(
   "/create",
   [body("text", "img").exists(), body("text").isString()],

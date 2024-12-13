@@ -1,3 +1,6 @@
+import mongoose from "mongoose";
+import User, { IUser } from "./models/user.model";
+
 export {};
 // todo check the namespace again
 declare global {
@@ -14,7 +17,7 @@ declare global {
   }
   namespace Express {
     export interface Request {
-      user: any;
+      user: IUser;
     }
   }
 }

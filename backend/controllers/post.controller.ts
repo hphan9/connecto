@@ -22,6 +22,70 @@ export const getAllPosts = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+export const getLikedPosts = async (req: Request, res: Response) => {
+  try {
+    const { id: userId } = req.params;
+    var posts = await Post.find({ likes: { $eq: userId } })
+      .populate({
+        path: "user",
+        select: "-password",
+      })
+      .populate({
+        path: "comments.user",
+        select: "-password",
+      });
+    res.status(200).json({ posts });
+  } catch (error) {
+    console.log(`Error Get Liked posts ${error}`);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const getFollowingPosts = async (req: Request, res: Response) => {
+  try {
+    const following = req.user.following;
+    const followingPosts = await Post.find({ user: { $in: following } })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "user",
+        select: "-password",
+      })
+      .populate({
+        path: "comments.user",
+        select: "-password",
+      });
+    res.status(200).json(followingPosts);
+  } catch (error) {
+    console.log(`Error get following posts ${error}`);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const getUserPosts = async (req: Request, res: Response) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      res.status(400).json({ error: "User not found" });
+      return;
+    }
+    const posts = await Post.find({ user: user._id })
+      .populate({
+        path: "user",
+        select: "-password",
+      })
+      .populate({
+        path: "comments.user",
+        select: "-password",
+      });
+    res.status(200).json(posts);
+  } catch (error) {
+    console.log(`Error get user posts ${error}`);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 export const createPost = async (req: Request, res: Response) => {
   try {
     const errors = validationResult(req);
