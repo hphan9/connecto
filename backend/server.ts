@@ -1,8 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth.routes";
-import userRoutes from "./routes/user.routes";
-import postRoutes from "./routes/post.routes";
+import authRoutes from "./routes/auth.route";
+import userRoutes from "./routes/user.route";
+import postRoutes from "./routes/post.route";
+import notificationRoutes from "./routes/notification.route";
 import connectMongoDB from "./db/connectMongoDB";
 import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.listen(PORT, () => {
   console.log(`server is up and running on port ${PORT}`);

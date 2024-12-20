@@ -5,8 +5,8 @@ export interface IUser extends mongoose.Document<Types.ObjectId> {
   fullName: String;
   password: String;
   email: String;
-  followers: [];
-  following: [];
+  followers: Array<Types.ObjectId>;
+  following: Array<Types.ObjectId>;
   profileImg: String;
   coverImg: String;
   bio: String;

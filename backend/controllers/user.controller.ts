@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User from "../models/user.model";
+import User, { IUser } from "../models/user.model";
 import { Types } from "mongoose";
 import Notification from "../models/notification.model";
 import bcrypt from "bcryptjs";
@@ -23,6 +23,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
 export const getSuggestedProfile = async (req: Request, res: Response) => {
   try {
     const userId = req.user._id;
+    // get all the users followed by me
     const usersFollowedByMe = await User.findById(userId).select("following");
     const users = await User.aggregate([
       {
@@ -32,6 +33,7 @@ export const getSuggestedProfile = async (req: Request, res: Response) => {
       },
       { $sample: { size: 10 } },
     ]);
+    // filter the users to included only user that not following by me
     const filteredUsers = users.filter(
       (user) => !usersFollowedByMe?.following.includes(user._id)
     );
@@ -59,7 +61,7 @@ export const followUnfollowUser = async (req: Request, res: Response) => {
       return;
     }
 
-    if (targetUserId == currUser._id) {
+    if (targetUserId == currUser._id.toString()) {
       res.status(400).json({ message: "You can't follow/unfollow yourself" });
       return;
     }
@@ -136,7 +138,10 @@ export const updateUser = async (req: Request, res: Response) => {
     }
 
     if (currentPassword && newPassword) {
-      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      const isMatch = await bcrypt.compare(
+        currentPassword,
+        user.password.toString()
+      );
       if (!isMatch) {
         res.status(400).json({ error: "Current password is incorrect" });
       }
