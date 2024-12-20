@@ -43,7 +43,6 @@ export const deleteNotification = async (req: Request, res: Response) => {
         .status(404)
         .json({ error: "You are not allowed to delete this notification" });
     }
-
     await Notification.deleteOne({ _id: notificationId });
     res.status(200).json({ message: "Notification deleted successfully" });
   } catch (error) {
