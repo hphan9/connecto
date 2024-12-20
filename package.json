@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint backend/**/*.ts",
     "prettier": "prettier --check backend/**/*.ts",
-    "prettier:fix": "prettier --write backend/**/*.ts",
+    "prettier:fix": "prettier --write backend/**/*.ts frontend/**/*.tsx",
     "dev": "nodemon backend/server.ts",
     "start": "ts-node backend/server.ts"
   },

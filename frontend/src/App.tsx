@@ -1,16 +1,9 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import { useState } from "react";
+import "./App.css";
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
-  return (
-    <>
-      <p className='text-blue-500'>Hello </p>  
-    </>
-  )
+  return <div className="flex max-w-6x1 mx-auto"></div>;
 }
 
-export default App
+export default App;
