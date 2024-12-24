@@ -5,6 +5,8 @@ import HomePage from "./pages/home/HomePage";
 import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignupPage";
 import RightPanel from "./components/common/RightPanel";
+import NotificationPage from "./pages/notification/NotificationPage";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 // todo: move routes to seperate file
 function App() {
@@ -16,6 +18,8 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/notifications" element={<NotificationPage />} />
+        <Route path="/profile/:username" element={<ProfilePage />} />
       </Routes>
       <RightPanel />
     </div>

@@ -1,4 +1,6 @@
-export const POSTS = [
+import Post from "../../components/common/Post";
+
+export const POSTS : Array<Post> = [
 	{
 		_id: "1",
 		text: "Let's build a fullstack WhatsApp clone with NEXT.JS 14 😍",
@@ -24,6 +26,7 @@ export const POSTS = [
 	{
 		_id: "2",
 		text: "How you guys doing? 😊",
+        img:null,
 		user: {
 			username: "johndoe",
 			profileImg: "/avatars/boy2.png",
