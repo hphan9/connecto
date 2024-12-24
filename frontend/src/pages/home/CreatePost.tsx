@@ -28,7 +28,6 @@ const CreatePost = () => {
         const reader = new FileReader();
         reader.onload = () => {
           if (typeof reader.result == "string") {
-            console.log(`Load file ${typeof reader.result} `);
             setImg(reader.result);
           }
         };
@@ -57,7 +56,7 @@ const CreatePost = () => {
               className="absolute top-0 right-0 text-white bg-gray-800 rounded-full w-5 h-5 cursor-pointer"
               onClick={() => {
                 setImg(null);
-                imgRef.current.value = null;
+                if (imgRef.current != null) imgRef.current.value = "";
               }}
             />
             <img
@@ -71,7 +70,7 @@ const CreatePost = () => {
           <div className="flex gap-1 items-center">
             <CiImageOn
               className="fill-primary w-6 h-6 cursor-pointer"
-              onClick={() => imgRef.current.click()}
+              onClick={() => imgRef.current?.click()}
             />
             <BsEmojiSmileFill className="fill-primary w-5 h-5 cursor-pointer" />
           </div>
