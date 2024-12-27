@@ -9,7 +9,6 @@ import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { User } from "../../components/common/Post";
 
 interface SignupUser {
   email: string;
