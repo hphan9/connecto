@@ -7,7 +7,7 @@ import SignUpPage from "./pages/auth/SignupPage";
 import RightPanel from "./components/common/RightPanel";
 import NotificationPage from "./pages/notification/NotificationPage";
 import ProfilePage from "./pages/profile/ProfilePage";
-
+import { Toaster } from "react-hot-toast";
 // todo: move routes to seperate file
 function App() {
   return (
@@ -22,6 +22,7 @@ function App() {
         <Route path="/profile/:username" element={<ProfilePage />} />
       </Routes>
       <RightPanel />
+      <Toaster />
     </div>
   );
 }
