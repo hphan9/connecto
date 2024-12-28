@@ -40,11 +40,11 @@ const LoginPage = () => {
       }
     },
     onSuccess: () => {
-        // refetch auth user
+      // refetch auth user
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
     },
     onError: (error) => {
-     toast.error(error.message);
+      toast.error(error.message);
     },
   });
 

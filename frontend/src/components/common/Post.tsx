@@ -16,7 +16,7 @@ interface Comment {
   text: string;
   user: User;
 }
-interface Post {
+export interface PostModel {
   _id: string;
   text: string;
   img: string | null;
@@ -24,7 +24,7 @@ interface Post {
   comments: Array<Comment>;
   likes: Array<String>;
 }
-const Post = (post: Post) => {
+const Post = (post: PostModel) => {
   const [comment, setComment] = useState("");
   const postOwner = post.user;
   const isLiked = false;

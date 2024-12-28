@@ -29,7 +29,7 @@ const ProfilePage = () => {
 
   const isLoading = false;
   const isMyProfile = true;
-  
+
   const handleImgChange = (e: ChangeEvent<HTMLInputElement>, state: string) => {
     if (e.target.files != null) {
       const file = e.target.files[0];
