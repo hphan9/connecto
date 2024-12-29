@@ -128,10 +128,15 @@ export const likeUnlikePost = async (req: Request, res: Response) => {
     }
     const userId = req.user._id;
     const isLikeExist = post.likes.includes(userId);
+    let updatedLikes = post.likes;
     if (isLikeExist) {
       // unlike post
       await post.updateOne({ $pull: { likes: { $eq: userId } } });
+      updatedLikes = updatedLikes.filter(
+        (l) => l.toString() !== userId.toString()
+      );
     } else {
+      // likepost
       await post.updateOne({ $push: { likes: userId } });
       const notification = new Notification({
         type: "like",
@@ -139,11 +144,9 @@ export const likeUnlikePost = async (req: Request, res: Response) => {
         to: post.user,
       });
       await notification.save();
+      updatedLikes.push(userId);
     }
-
-    res
-      .status(200)
-      .json({ message: `${isLikeExist ? "Unlike" : "Like"} successfully` });
+    res.status(200).json(updatedLikes);
   } catch (error: any) {
     console.log(`Error like unlike post ${error.message}`);
     res.status(500).json({ error: "Server error" });
