@@ -30,7 +30,6 @@ const Posts = ({ feedType }: Props) => {
   } = useQuery<Array<PostModel>>({
     queryKey: ["posts"],
     queryFn: async () => {
-      console.log(POST_ENDPOINT);
       try {
         const res = await fetch(POST_ENDPOINT, {
           method: "GET",

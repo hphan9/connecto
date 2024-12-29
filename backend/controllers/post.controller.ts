@@ -112,8 +112,8 @@ export const createPost = async (req: Request, res: Response) => {
     await newPost.save();
 
     res.status(201).json({ newPost });
-  } catch (error) {
-    console.log(`Error save new post ${error}`);
+  } catch (error: any) {
+    console.log(`Error save new post ${error.message}`);
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -144,8 +144,8 @@ export const likeUnlikePost = async (req: Request, res: Response) => {
     res
       .status(200)
       .json({ message: `${isLikeExist ? "Unlike" : "Like"} successfully` });
-  } catch (error) {
-    console.log(`Error like unlike post ${error}`);
+  } catch (error: any) {
+    console.log(`Error like unlike post ${error.message}`);
     res.status(500).json({ error: "Server error" });
   }
 };

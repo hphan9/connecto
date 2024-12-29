@@ -78,6 +78,7 @@ export const login = async (req: Request, res: Response) => {
     );
     if (!validPassword) {
       res.status(400).json({ error: "Invalid Password" });
+      return;
     }
 
     // we have to generate token again to send back to the browser
