@@ -13,6 +13,7 @@ import {
 } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
+import { formatPostDate, formatMemberSinceDate } from "../../utils/date";
 
 interface User {
   _id: string;
@@ -32,6 +33,7 @@ export interface PostModel {
   user: User;
   comments: Array<Comment>;
   likes: Array<String>;
+  createdAt: string;
 }
 const Post = (post: PostModel) => {
   const [comment, setComment] = useState("");
@@ -42,7 +44,7 @@ const Post = (post: PostModel) => {
 
   const isMyPost = authUser?._id == postOwner._id;
 
-  const formattedDate = "1h";
+  const formattedDate = formatPostDate(post.createdAt);
 
   const queryClient = useQueryClient();
 
