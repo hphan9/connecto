@@ -160,7 +160,7 @@ export const commentOnPost = async (req: Request, res: Response) => {
     return;
   }
   try {
-    const { comment } = req.body;
+    const { text: comment } = req.body;
     const { id } = req.params;
     const post = await Post.findById(id);
     if (!post) {
@@ -171,9 +171,9 @@ export const commentOnPost = async (req: Request, res: Response) => {
     post.comments.push({ user: req.user._id, text: comment });
     await post.save();
 
-    res.status(200).json({ message: "Comment successfully" });
-  } catch (error) {
-    console.log(`Error delete  post ${error}`);
+    res.status(200).json(post.comments);
+  } catch (error: any) {
+    console.log(`Error comment post ${error.message}`);
     res.status(500).json({ error: "Server error" });
   }
 };

@@ -44,8 +44,6 @@ const Post = (post: PostModel) => {
 
   const formattedDate = "1h";
 
-  const isCommenting = false;
-
   const queryClient = useQueryClient();
 
   const {
@@ -110,12 +108,51 @@ const Post = (post: PostModel) => {
     },
   });
 
+  const {
+    mutate: commentPost,
+    isPending: isCommenting,
+    error: commentError,
+  } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/comment/${post._id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: comment }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Something wrong");
+        return data;
+      } catch (error: any) {
+        throw new Error(error);
+      }
+    },
+    onSuccess: (updatedcomment) => {
+      setComment("");
+      queryClient.setQueryData(["posts"], (oldData: PostModel[]) => {
+        return oldData.map((p) => {
+          if (p._id === post._id) {
+            return { ...p, comments: updatedcomment };
+          }
+          return p;
+        });
+      });
+      toast.success("Comment Post successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const handleDeletePost = () => {
     deletePost();
   };
 
   const handlePostComment = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    commentPost();
   };
 
   const handleLikePost = () => {
