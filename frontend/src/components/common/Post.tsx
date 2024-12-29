@@ -74,6 +74,7 @@ const Post = (post: PostModel) => {
       toast.error(error.message);
     },
   });
+
   const {
     mutate: likePost,
     isPending: isLiking,
