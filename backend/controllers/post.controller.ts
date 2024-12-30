@@ -35,7 +35,11 @@ export const getLikedPosts = async (req: Request, res: Response) => {
         path: "comments.user",
         select: "-password",
       });
-    res.status(200).json({ posts });
+    if (posts.length === 0) {
+      res.status(200).json([]);
+      return;
+    }
+    res.status(200).json(posts);
   } catch (error) {
     console.log(`Error Get Liked posts ${error}`);
     res.status(500).json({ error: "Server error" });
@@ -79,6 +83,10 @@ export const getUserPosts = async (req: Request, res: Response) => {
         path: "comments.user",
         select: "-password",
       });
+    if (posts.length === 0) {
+      res.status(200).json([]);
+      return;
+    }
     res.status(200).json(posts);
   } catch (error) {
     console.log(`Error get user posts ${error}`);

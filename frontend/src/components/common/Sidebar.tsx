@@ -19,6 +19,7 @@ export interface User {
   link: string;
   following: Array<string>;
   followers: Array<string>;
+  createdAt: string;
 }
 const Sidebar = () => {
   const queryClient = useQueryClient();

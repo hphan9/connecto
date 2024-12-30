@@ -7,20 +7,28 @@ import { useEffect } from "react";
 
 interface Props {
   feedType: string;
+  username: string;
+  userId: string;
 }
-const Posts = ({ feedType }: Props) => {
+const Posts = ({ feedType, username, userId }: Props) => {
   const getPostEndpoint = () => {
     switch (feedType) {
       case "forYou":
         return "/api/posts/all";
       case "following":
         return "/api/posts/following";
+      case "posts":
+        // rememeber to put the "/" before url since fech("url") is relative to root
+        return "/api/posts/user/" + username;
+      case "likes":
+        return "/api/posts/likes/" + userId;
       default:
         return "/api/posts/all";
     }
   };
 
   const POST_ENDPOINT = getPostEndpoint();
+  console.log(POST_ENDPOINT);
   const {
     data: posts,
     isLoading,
@@ -38,13 +46,14 @@ const Posts = ({ feedType }: Props) => {
         if (!res.ok) throw new Error(data.error || "Something wrong");
         return data;
       } catch (error) {
+        console.log(error);
         throw new Error(error);
       }
     },
   });
   useEffect(() => {
     refetch();
-  }, [feedType]);
+  }, [feedType, username, refetch]);
   return (
     <>
       {isLoading && (
