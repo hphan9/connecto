@@ -14,7 +14,7 @@ const RightPanel = () => {
     queryKey: ["suggestedUsers"],
     queryFn: async () => {
       try {
-        const res = await fetch("api/users/suggested", {
+        const res = await fetch("/api/users/suggested", {
           method: "GET",
         });
 
