@@ -1,7 +1,23 @@
-import { ChangeEvent, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ChangeEvent, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { User } from "../../components/common/Sidebar";
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
-const EditProfileModal = () => {
-  const [formData, setFormData] = useState({
+interface UserForm {
+  fullName: string;
+  username: string;
+  email: string;
+  bio: string;
+  link: string;
+  newPassword: string;
+  currentPassword: string;
+}
+interface Props {
+  authUser: User | undefined;
+}
+const EditProfileModal = ({ authUser }: Props) => {
+  const initialForm: UserForm = {
     fullName: "",
     username: "",
     email: "",
@@ -9,13 +25,30 @@ const EditProfileModal = () => {
     link: "",
     newPassword: "",
     currentPassword: "",
-  });
+  };
+  const [formData, setFormData] = useState<UserForm>(initialForm);
+
+  const { updateProfile, isPending } = useUpdateUserProfile();
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    if (authUser) {
+      const currentData = {
+        ...initialForm,
+        fullName: authUser.fullName,
+        username: authUser.username,
+        email: authUser.email,
+        bio: authUser.bio,
+        link: authUser.link,
+      };
+      setFormData(currentData);
+    }
+  }, [authUser]);
 
   return (
     <>
@@ -34,7 +67,7 @@ const EditProfileModal = () => {
             className="flex flex-col gap-4"
             onSubmit={(e) => {
               e.preventDefault();
-              alert("Profile updated successfully");
+              updateProfile(formData);
             }}
           >
             <div className="flex flex-wrap gap-2">
@@ -99,7 +132,7 @@ const EditProfileModal = () => {
               onChange={handleInputChange}
             />
             <button className="btn btn-primary rounded-full btn-sm text-white">
-              Update
+              {isPending ? "Updating" : "Update"}
             </button>
           </form>
         </div>

@@ -131,10 +131,14 @@ export const updateUser = async (req: Request, res: Response) => {
       return;
     }
 
-    if ((!newPassword && currentPassword) || (currentPassword && newPassword)) {
+    if (
+      (!newPassword && currentPassword) ||
+      (!currentPassword && newPassword)
+    ) {
       res.status(400).json({
         error: "Please provide both current password and new password",
       });
+      return;
     }
 
     if (currentPassword && newPassword) {
@@ -144,6 +148,7 @@ export const updateUser = async (req: Request, res: Response) => {
       );
       if (!isMatch) {
         res.status(400).json({ error: "Current password is incorrect" });
+        return;
       }
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(newPassword, salt);
@@ -166,7 +171,7 @@ export const updateUser = async (req: Request, res: Response) => {
         id && (await cloudinary.uploader.destroy(id));
       }
       const uploadedResponse = await cloudinary.uploader.upload(coverImg);
-      profileImg = uploadedResponse.secure_url;
+      coverImg = uploadedResponse.secure_url;
     }
 
     user.fullName = fullName || user.fullName;

@@ -12,6 +12,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "../../components/common/Sidebar";
 import { formatMemberSinceDate } from "../../utils/date";
 import useFollow from "../../hooks/useFollow";
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
 const ProfilePage = () => {
   const { username } = useParams();
@@ -29,7 +30,7 @@ const ProfilePage = () => {
     refetch,
     isRefetching,
   } = useQuery<User>({
-    queryKey: [`user/${username}`],
+    queryKey: [`userProfile`],
     queryFn: async () => {
       try {
         const res = await fetch(`/api/users/profile/${username}`, {
@@ -44,10 +45,12 @@ const ProfilePage = () => {
     },
   });
 
+  const { updateProfile, isPending: isUpdatingImg } = useUpdateUserProfile();
+
   // refetch if username change
   useEffect(() => {
     refetch();
-  }, [username, refetch]);
+  }, [username, user, refetch]);
 
   const memberSinceDate = formatMemberSinceDate(user?.createdAt || "");
 
@@ -146,7 +149,7 @@ const ProfilePage = () => {
                 </div>
               </div>
               <div className="flex justify-end px-4 mt-5">
-                {isMyProfile && <EditProfileModal />}
+                {isMyProfile && <EditProfileModal authUser={authUser} />}
                 {!isMyProfile && !isFollowPending && (
                   <button
                     className="btn btn-outline rounded-full btn-sm"
@@ -159,9 +162,13 @@ const ProfilePage = () => {
                 {(coverImg || profileImg) && (
                   <button
                     className="btn btn-primary rounded-full btn-sm text-white px-4 ml-2"
-                    onClick={() => alert("Profile updated successfully")}
+                    onClick={async () => {
+                      await updateProfile({ coverImg, profileImg });
+                      setProfileImg(null);
+                      setCoverImg(null);
+                    }}
                   >
-                    Update
+                    {isUpdatingImg ? "Updating" : "Update"}
                   </button>
                 )}
               </div>
@@ -181,12 +188,12 @@ const ProfilePage = () => {
                       <>
                         <FaLink className="w-3 h-3 text-slate-500" />
                         <a
-                          href="https://youtube.com/@asaprogrammer_"
+                          href={user.link}
                           target="_blank"
                           rel="noreferrer"
                           className="text-sm text-blue-500 hover:underline"
                         >
-                          youtube.com/@asaprogrammer_
+                          {user.link.replace(/(^\w+:|^)\/\//, "")}
                         </a>
                       </>
                     </div>
