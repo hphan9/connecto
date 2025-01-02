@@ -7,6 +7,7 @@ import notificationRoutes from "./routes/notification.route";
 import connectMongoDB from "./db/connectMongoDB";
 import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
+import { MessageBroker } from "./utils/broker";
 
 dotenv.config();
 cloudinary.config({
@@ -21,6 +22,12 @@ const PORT = process.env.PORT || 8000;
 app.use(express.json({ limit: "5mb" })); // to parse req.json , limit should not be to big to prevent DOS
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+const producer = await MessageBroker.connectProducer();
+producer.on("producer.connect", () => {
+  console.log("producer connected");
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
