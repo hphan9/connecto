@@ -5,6 +5,8 @@ import Post from "../models/post.model";
 import { validationResult } from "express-validator";
 import { v2 as cloudinary } from "cloudinary";
 import Notification from "../models/notification.model";
+import { MessageBroker } from "../utils/broker";
+import { PostEvent } from "../types/subscription.type";
 
 export const getAllPosts = async (req: Request, res: Response) => {
   try {
@@ -66,6 +68,14 @@ export const getFollowingPosts = async (req: Request, res: Response) => {
   }
 };
 
+export const getPostConsumer = async (req: Request, res: Response) => {
+  try {
+    res.status(200).json("test");
+  } catch (error) {
+    console.log(`Error get all post ${error}`);
+    res.status(500).json({ error: "Server error" });
+  }
+};
 export const getUserPosts = async (req: Request, res: Response) => {
   const { username } = req.params;
   try {
@@ -118,6 +128,16 @@ export const createPost = async (req: Request, res: Response) => {
     });
 
     await newPost.save();
+    await MessageBroker.publish({
+      topic: "PostEvents",
+      event: PostEvent.CREATE_POST,
+      message: {
+        id: newPost._id.toString(),
+        text: newPost.text,
+        img: newPost.img,
+      },
+      headers: { userId: user._id.toString() },
+    });
 
     res.status(201).json({ newPost });
   } catch (error: any) {
