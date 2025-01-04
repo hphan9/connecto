@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
 import { MessageBroker } from "./utils/broker";
 import { Message } from "kafkajs";
+import { InitializeBroker } from "./services/broker.services";
 
 export const ExpressApp = async () => {
   cloudinary.config({
@@ -22,18 +23,7 @@ export const ExpressApp = async () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
 
-  const producer = await MessageBroker.connectProducer();
-  producer.on("producer.connect", () => {
-    console.log("producer connected");
-  });
-  const consumer = await MessageBroker.connectConsumer();
-  consumer.on("consumer.connect", () => {
-    console.log("consumer connected");
-  });
-
-  await MessageBroker.subscribe((message: Message) => {
-    console.log("Message", message);
-  }, "PostEvents");
+  await InitializeBroker();
 
   app.use("/api/auth", authRoutes);
   app.use("/api/users", userRoutes);
