@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "strict": true,
+    "target": "esnext",
+    "typeRoots":["/./global.d.ts"]
+  },
+  "ts-node": {
+        // Tell ts-node CLI to install the --loader automatically
+        "esm": true,
+        "experimentalSpecifierResolution": "node"
+    },
+  "include": [
+    "./**/*",
+    "./*"
+  ]
+}
