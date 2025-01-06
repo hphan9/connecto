@@ -1,11 +1,15 @@
 import mongoose from "mongoose";
-import User, { IUser } from "./models/user.model";
 
+interface AuthUser {
+  username: string;
+  _id: string;
+  email: string;
+}
 export {};
 // todo check the namespace again
 declare global {
   namespace NodeJS {
-    export interface ProcessEnv {
+    interface ProcessEnv {
       NODE_ENV: string;
       PORT: string;
       MONGO_URI: string;
@@ -16,8 +20,8 @@ declare global {
     }
   }
   namespace Express {
-    export interface Request {
-      user: IUser;
+    interface Request {
+      user: AuthUser;
     }
   }
 }

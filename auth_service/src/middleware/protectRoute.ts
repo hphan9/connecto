@@ -6,7 +6,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
   try {
     const token = req.cookies.jwt;
     if (!token) {
-      res.status(401).json({ error: 'You nedd to login first' });
+      res.status(401).json({ error: 'You need to login first' });
       return;
     }
 
@@ -16,7 +16,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
       return;
     }
 
-    const user = await User.findById((<JwtPayload>decoded).userId);
+    const user = await User.findById((<JwtPayload>decoded)._id);
     if (!user) {
       res.status(404).json({ error: 'User not found' });
       return;

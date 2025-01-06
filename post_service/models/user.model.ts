@@ -1,17 +1,5 @@
 import mongoose, { ObjectId, Types } from "mongoose";
 
-export interface IUser extends mongoose.Document<Types.ObjectId> {
-  username: String;
-  fullName: String;
-  password: String;
-  email: String;
-  followers: Array<Types.ObjectId>;
-  following: Array<Types.ObjectId>;
-  profileImg: String;
-  coverImg: String;
-  bio: String;
-  link: String;
-}
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -67,6 +55,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model<IUser>("User", userSchema);
+const User = mongoose.model("User", userSchema);
 
 export default User;

@@ -3,8 +3,13 @@ import { Response } from 'express';
 import { Types } from 'mongoose';
 
 // we should pass res here since we will return the cookie back to the client
-export const generateTokenAndSetCookie = (userId: Types.ObjectId, res: Response) => {
-  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+export const generateTokenAndSetCookie = (
+  _id: Types.ObjectId,
+  username: String,
+  useremail: String,
+  res: Response
+) => {
+  const token = jwt.sign({ _id, username, useremail }, process.env.JWT_SECRET, {
     expiresIn: '15d'
   });
   res.cookie('jwt', token, {

@@ -7,6 +7,7 @@ import { v2 as cloudinary } from "cloudinary";
 //import Notification from "../models/notification.model";
 import { MessageBroker } from "../utils/broker";
 import { PostEvent } from "../types/subscription.type";
+import path from "path";
 
 export const getAllPosts = async (req: Request, res: Response) => {
   try {
@@ -50,7 +51,9 @@ export const getLikedPosts = async (req: Request, res: Response) => {
 
 export const getFollowingPosts = async (req: Request, res: Response) => {
   try {
-    const following = req.user.following;
+    const following = await User.findById(req.user._id).get("following");
+    console.log(following);
+
     const followingPosts = await Post.find({ user: { $in: following } })
       .sort({ createdAt: -1 })
       .populate({
@@ -154,7 +157,7 @@ export const likeUnlikePost = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Post not found" });
       return;
     }
-    const userId = req.user._id;
+    const userId = new Types.ObjectId(req.user._id);
     const isLikeExist = post.likes.includes(userId);
     let updatedLikes = post.likes;
     if (isLikeExist) {
@@ -214,7 +217,7 @@ export const deletePost = async (req: Request, res: Response) => {
       res.status(404).json({ error: "Post not found" });
       return;
     }
-    if (post.user.toString() !== req.user._id.toString()) {
+    if (post.user._id.toString() !== req.user._id) {
       res
         .status(401)
         .json({ error: "You are not authorized to delete this post" });

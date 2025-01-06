@@ -1,5 +1,5 @@
 import express from 'express';
-import { signup, login, logout, getMe } from '../services/auth.service';
+import { signup, login, logout, getMe, validate } from '../services/auth.service';
 import { body } from 'express-validator';
 import { protectRoute } from '../middleware/protectRoute';
 
@@ -18,5 +18,6 @@ authRoutes.post(
 );
 authRoutes.post('/login', login);
 authRoutes.post('/logout', logout);
-
+// route to validate user request from other services
+authRoutes.get('/validate', validate);
 export default authRoutes;

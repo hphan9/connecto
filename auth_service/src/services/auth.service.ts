@@ -3,8 +3,15 @@ import bcrypt from 'bcryptjs';
 import User from '../models/user.model';
 import { generateTokenAndSetCookie } from '../utils/generateToken';
 import { validationResult } from 'express-validator';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 // don't remove this line, it will cause compiler error
 import user from '../../global';
+
+interface AuthUser extends JwtPayload {
+  username: string;
+  _id: string;
+  email: string;
+}
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -40,7 +47,7 @@ export const signup = async (req: Request, res: Response) => {
     });
 
     if (newUser) {
-      generateTokenAndSetCookie(newUser._id, res);
+      generateTokenAndSetCookie(newUser._id, newUser.username, newUser.email, res);
 
       await newUser.save();
 
@@ -80,7 +87,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // we have to generate token again to send back to the browser
-    generateTokenAndSetCookie(user._id, res);
+    generateTokenAndSetCookie(user._id, user.username, user.email, res);
 
     res.status(200).send({
       _id: user._id,
@@ -116,6 +123,27 @@ export const getMe = async (req: Request, res: Response) => {
     res.status(200).json(user);
   } catch (error) {
     console.log(`Error in get me controller ${error}`);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+export const validate = async (req: Request, res: Response) => {
+  try {
+    const token = req.headers['authorization'];
+    if (!token) {
+      res.status(401).json({ error: 'You need to login first' });
+      return;
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded) {
+      res.status(401).json({ error: 'Unauthorized: Invalid Token' });
+      return;
+    }
+    var user = <AuthUser>decoded;
+    console.log(user);
+    res.status(200).json({ user });
+  } catch (error) {
+    console.log(`Error in validate request ${error}`);
     res.status(500).json({ error: 'Server error' });
   }
 };

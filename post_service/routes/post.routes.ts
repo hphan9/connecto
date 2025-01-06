@@ -1,5 +1,5 @@
 import express from "express";
-import { protectRoute } from "../middleware/protectRoute";
+import { validateRoute } from "../middleware/validateRoute";
 import {
   commentOnPost,
   createPost,
@@ -13,24 +13,24 @@ import {
 import { body } from "express-validator";
 const router = express.Router();
 
-router.get("/all", protectRoute, getAllPosts);
+router.get("/all", validateRoute, getAllPosts);
 // get all post liked by user id in the params
-router.get("/likes/:id", protectRoute, getLikedPosts);
-router.get("/following", protectRoute, getFollowingPosts);
-router.get("/user/:username", protectRoute, getUserPosts);
+router.get("/likes/:id", validateRoute, getLikedPosts);
+router.get("/following", validateRoute, getFollowingPosts);
+router.get("/user/:username", validateRoute, getUserPosts);
 router.post(
   "/create",
   [body("text", "img").exists(), body("text").isString()],
-  protectRoute,
+  validateRoute,
   createPost
 );
-router.post("/like/:id", protectRoute, likeUnlikePost);
+router.post("/like/:id", validateRoute, likeUnlikePost);
 router.post(
   "/comment/:id",
   [body("text").isString().withMessage("Comment must have text")],
-  protectRoute,
+  validateRoute,
   commentOnPost
 );
-router.delete("/:id", protectRoute, deletePost);
+router.delete("/:id", validateRoute, deletePost);
 
 export default router;

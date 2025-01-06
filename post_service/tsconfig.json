@@ -8,11 +8,12 @@
     "outDir": "dist",
     "strict": true,
     "target": "esnext",
+    "typeRoots":["./global.d.ts"]
   },
   "ts-node": {
         // Tell ts-node CLI to install the --loader automatically
         "esm": true,
-        "experimentalSpecifierResolution": "node"
+        "experimentalSpecifierResolution": "node",
     },
   "include": [
     "./**/*",
