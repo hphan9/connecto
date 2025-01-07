@@ -25,9 +25,7 @@ export const validateRoute = async (
       res.status(401).json({ error: "User not authorised" });
       return;
     }
-    const user = response.data;
-    console.log(user);
-    req.user = user;
+    req.user = response.data.user;
     next();
   } catch (error) {
     console.log(`Error verify token in ValidateRoute middleware ${error}`);
