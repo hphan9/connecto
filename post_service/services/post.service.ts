@@ -51,9 +51,8 @@ export const getLikedPosts = async (req: Request, res: Response) => {
 
 export const getFollowingPosts = async (req: Request, res: Response) => {
   try {
-    const following = await User.findById(req.user._id).get("following");
-    console.log(following);
-
+    const user = await User.findById(req.user._id);
+    const following = user?.following;
     const followingPosts = await Post.find({ user: { $in: following } })
       .sort({ createdAt: -1 })
       .populate({
