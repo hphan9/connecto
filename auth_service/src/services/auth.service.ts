@@ -140,7 +140,10 @@ export const validate = async (req: Request, res: Response) => {
       return;
     }
     var user = <AuthUser>decoded;
-    console.log(user);
+    if(!user){
+      res.status(200).json({ error: 'User not found' });
+      return;
+    }
     res.status(200).json({ user });
   } catch (error) {
     console.log(`Error in validate request ${error}`);
