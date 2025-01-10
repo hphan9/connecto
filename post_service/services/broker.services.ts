@@ -12,13 +12,6 @@ export const InitializeBroker = async () => {
   consumer.on("consumer.connect", () => {
     console.log("consumer connected successfully");
   });
-
-  // keep listening to consuemers events
-  // perform the action based on the event
-  await MessageBroker.subscribe((message: Message) => {
-    console.log("Message", message);
-    // todo: create HandleMessage for PostEvents
-  }, "PostEvents");
 };
 
 //publish dedicated events

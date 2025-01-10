@@ -1,9 +1,11 @@
 import { Message } from "kafkajs";
 import { MessageBroker } from "../utils/broker";
 import { PostEvent } from "../types/subscription.type";
+import { createPostHandler } from "./timeline.service";
 
 // initialize the broker
 export const InitializeBroker = async () => {
+  //todo : remove producer since we don't need to use it here
   const producer = await MessageBroker.connectProducer();
   producer.on("producer.connect", () => {
     console.log("producer connected successfully");
@@ -15,19 +17,6 @@ export const InitializeBroker = async () => {
 
   // keep listening to consuemers events
   // perform the action based on the event
-  await MessageBroker.subscribe((message: Message) => {
-    console.log("Message", message);
-    // todo: create HandleMessage for PostEvents
-  }, "PostEvents");
+  await MessageBroker.subscribe(createPostHandler, "PostEvents");
 };
 
-//publish dedicated events
-
-export const SendCreatePostMessage = async (data: any) => {
-  await MessageBroker.publish({
-    event: PostEvent.CREATE_POST,
-    topic: "PostEvents",
-    headers: {},
-    message: data,
-  });
-};

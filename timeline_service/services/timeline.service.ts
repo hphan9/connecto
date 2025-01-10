@@ -1,6 +1,7 @@
-
+import redis from "redis";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
+import { Message } from "kafkajs";
 
 export const getFeed = async(req: Request, res: Response)=>{
     var user = req.user;
@@ -9,4 +10,8 @@ export const getFeed = async(req: Request, res: Response)=>{
     // save that to redis cache 
     console.log("success");
     res.status(200);
+}
+
+export const createPostHandler = async(message : Message)=>{
+    console.log(message);
 }
