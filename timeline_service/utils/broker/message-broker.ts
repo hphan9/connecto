@@ -72,9 +72,11 @@ const subscribe = async (messageHandler: any, topic: string) => {
       if (topic != "PostEvents") {
         return;
       }
-      console.log(message.key);
       if (message.key && message.value) {
+        //deserialize message by toString method
+        // consider using registry to decode
         const inputMessage = JSON.parse(message.value.toString());
+        console.log(inputMessage);
         await messageHandler(inputMessage);
         await consumer.commitOffsets([
           { topic, partition, offset: (Number(message.offset) + 1).toString() },

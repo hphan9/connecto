@@ -20,9 +20,7 @@ export const ExpressApp = async () => {
   app.use(express.json({ limit: "5mb" })); // to parse req.json , limit should not be to big to prevent DOS
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
-
-  await InitializeBroker();
-
+  
   app.use("/api/auth", authRoutes);
   app.use("/api/users", userRoutes);
   app.use("/api/posts", postRoutes);

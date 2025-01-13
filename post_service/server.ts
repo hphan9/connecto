@@ -3,7 +3,7 @@ import { ExpressApp } from "./express-app";
 import dotenv from "dotenv";
 
 dotenv.config();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8002;
 console.log(process.env.PORT);
 export const StartServer = async () => {
   const expressApp = await ExpressApp();

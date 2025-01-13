@@ -23,7 +23,7 @@ function App() {
     queryFn: async () => {
       try {
         // get the auth user based on cookie of web client
-        const res = await fetch("/api/auth/me");
+        const res = await fetch("/auth/me");
         const data = await res.json();
         if (data.error) return null;
         if (!res.ok) {

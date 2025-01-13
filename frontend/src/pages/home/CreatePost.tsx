@@ -21,7 +21,7 @@ const CreatePost = () => {
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async (post: NewPost) => {
       try {
-        const res = await fetch(`/api/posts/create`, {
+        const res = await fetch(`/posts/create`, {
           method: "POST",
           body: JSON.stringify(post),
           headers: {

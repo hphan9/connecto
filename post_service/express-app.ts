@@ -20,7 +20,7 @@ export const ExpressApp = async () => {
 
   await InitializeBroker();
 
-  app.use("/", postRoutes);
+  app.use("/posts", postRoutes);
   await connectMongoDB();
 
   return app;

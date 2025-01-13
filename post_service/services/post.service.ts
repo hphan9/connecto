@@ -130,13 +130,14 @@ export const createPost = async (req: Request, res: Response) => {
     });
 
     await newPost.save();
+    await newPost.populate({ path: "user", select: "-password" });
     await MessageBroker.publish({
       topic: "PostEvents",
       event: PostEvent.CREATE_POST,
       message: {
+        userId:user._id.toString(),
         id: newPost._id.toString(),
-        text: newPost.text,
-        img: newPost.img,
+        post:newPost
       },
       headers: { userId: user._id.toString() },
     });
@@ -198,10 +199,8 @@ export const commentOnPost = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Post not found" });
       return;
     }
-
     post.comments.push({ user: req.user._id, text: comment });
     await post.save();
-
     res.status(200).json(post.comments);
   } catch (error: any) {
     console.log(`Error comment post ${error.message}`);

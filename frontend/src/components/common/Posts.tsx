@@ -1,8 +1,6 @@
 import PostSkeleton from "../skeletons/PostSkeleton";
-import { POSTS } from "../../utils/db/dummy";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import Post, { PostModel } from "./Post";
-import toast from "react-hot-toast";
 import { useEffect } from "react";
 
 interface Props {
@@ -14,16 +12,16 @@ const Posts = ({ feedType, username, userId }: Props) => {
   const getPostEndpoint = () => {
     switch (feedType) {
       case "forYou":
-        return "/api/posts/all";
+        return "/posts/all";
       case "following":
-        return "/api/posts/following";
+        return "/timeline";
       case "posts":
         // rememeber to put the "/" before url since fech("url") is relative to root
-        return "/api/posts/user/" + username;
+        return "/posts/user/" + username;
       case "likes":
-        return "/api/posts/likes/" + userId;
+        return "/posts/likes/" + userId;
       default:
-        return "/api/posts/all";
+        return "/posts/all";
     }
   };
 

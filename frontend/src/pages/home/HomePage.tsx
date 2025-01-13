@@ -36,6 +36,7 @@ const HomePage = () => {
         <CreatePost />
 
         {/* POSTS */}
+        {/* todo fix username and id post to Posts*/}
         <Posts feedType={feedType} />
       </div>
     </>

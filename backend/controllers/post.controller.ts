@@ -5,8 +5,6 @@ import Post from "../models/post.model";
 import { validationResult } from "express-validator";
 import { v2 as cloudinary } from "cloudinary";
 import Notification from "../models/notification.model";
-import { MessageBroker } from "../utils/broker";
-import { PostEvent } from "../types/subscription.type";
 
 export const getAllPosts = async (req: Request, res: Response) => {
   try {
@@ -128,17 +126,6 @@ export const createPost = async (req: Request, res: Response) => {
     });
 
     await newPost.save();
-    await MessageBroker.publish({
-      topic: "PostEvents",
-      event: PostEvent.CREATE_POST,
-      message: {
-        id: newPost._id.toString(),
-        text: newPost.text,
-        img: newPost.img,
-      },
-      headers: { userId: user._id.toString() },
-    });
-
     res.status(201).json({ newPost });
   } catch (error: any) {
     console.log(`Error save new post ${error.message}`);
