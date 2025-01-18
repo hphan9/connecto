@@ -1,8 +1,7 @@
 import express from "express";
-import feedRoutes from "./routes/timeline.routes";
+import userRoutes from "./routes/user.routes";
 import connectMongoDB from "./db/connectMongoDB";
 import cookieParser from "cookie-parser";
-import { InitializeBroker } from "./services/broker.services";
 
 export const ExpressApp = async () => {
 
@@ -12,9 +11,7 @@ export const ExpressApp = async () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
 
-  await InitializeBroker();
-
-  app.use("/timeline", feedRoutes);
+  app.use("/user", userRoutes);
   await connectMongoDB();
 
   return app;

@@ -68,7 +68,7 @@ export const createPostHandler = async (message: MessageType) => {
     const listOfTask = followers.map(async (f: Types.ObjectId) => {
         return addPost(f.toString())
     });
-    Promise.all(listOfTask);
+    await Promise.all(listOfTask);
   } catch (error) {
     console.log(`Error handle create Post events  message ${error}`);
   }

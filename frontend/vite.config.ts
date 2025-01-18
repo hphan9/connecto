@@ -22,7 +22,11 @@ export default defineConfig({
     "/posts":{
       target:"http://localhost:8002",
       changeOrigin:true,
-    }
+    },
+    "/user":{
+      target:"http://localhost:8004",
+      changeOrigin:true,
+    },
     }
   }
 })
