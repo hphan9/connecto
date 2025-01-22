@@ -14,7 +14,7 @@ export const ExpressApp = async () => {
 
   await InitializeBroker();
 
-  app.use("/timeline", feedRoutes);
+  app.use("/", feedRoutes);
   await connectMongoDB();
 
   return app;

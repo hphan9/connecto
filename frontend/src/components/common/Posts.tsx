@@ -12,16 +12,16 @@ const Posts = ({ feedType, username, userId }: Props) => {
   const getPostEndpoint = () => {
     switch (feedType) {
       case "forYou":
-        return "/posts/all";
+        return "/api/posts/all";
       case "following":
-        return "/timeline";
+        return "/api/timeline";
       case "posts":
         // rememeber to put the "/" before url since fech("url") is relative to root
-        return "/posts/user/" + username;
+        return "/api/posts/user/" + username;
       case "likes":
-        return "/posts/likes/" + userId;
+        return "/api/posts/likes/" + userId;
       default:
-        return "/posts/all";
+        return "/api/posts/all";
     }
   };
 

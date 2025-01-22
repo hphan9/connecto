@@ -11,7 +11,7 @@ app.use(express.json({ limit: '5mb' })); // to parse req.json , limit should not
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use('/auth', authRoutes);
+app.use('/', authRoutes);
 app.listen(process.env.PORT, () => {
   console.log(`App is listening to ${process.env.PORT}`);
 });

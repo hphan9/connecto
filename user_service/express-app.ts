@@ -11,7 +11,7 @@ export const ExpressApp = async () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
 
-  app.use("/user", userRoutes);
+  app.use("/", userRoutes);
   await connectMongoDB();
 
   return app;
