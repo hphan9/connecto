@@ -1,5 +1,6 @@
 version: "3"
 services:
+# Kaftka
   zookeeper:
     image: 'bitnami/zookeeper:latest'
     ports:
@@ -19,3 +20,93 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
+#redis
+  redis:
+    image: 'redis:latest'
+    ports:
+      - 6379:6379
+  mongodb:
+    image: 'mongo'
+    ports:
+      - 27818:27817
+# microservices:
+  auth_service:
+    build: 
+      dockerfile: Dockerfile
+      context: ./auth_service
+    container_name: auth_service
+    ports:
+      - 8001:8001
+    restart: always
+    depends_on:
+      - mongodb
+      - kafka
+    volumes:
+      - .:/app
+      - /app/auth_service/node_modules
+    env_file:
+      - ./auth_service/.env
+  post_service:
+    build: 
+      dockerfile: Dockerfile
+      context: ./post_service
+    container_name: post_service
+    ports:
+      - 8002:8002
+    restart: always
+    depends_on:
+      - mongodb
+      - kafka
+    volumes:
+      - .:/app
+      - /app/post_service/node_modules
+    env_file:
+      - ./post_service/.env
+  timeline_service:
+    build: 
+      dockerfile: Dockerfile
+      context: ./timeline_service
+    container_name: timeline_service
+    ports:
+      - 8003:8003
+    restart: always
+    depends_on:
+      - mongodb
+      - kafka
+      - redis
+    volumes:
+      - .:/app
+      - /app/timeline_service/node_modules
+    env_file:
+      - ./timeline_service/.env
+  
+  user_service:
+    build: 
+      dockerfile: Dockerfile
+      context: ./user_service
+    container_name: user_service
+    ports:
+      - 8004:8004
+    restart: always
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app
+      - /app/user_service/node_modules
+    env_file:
+      - ./user_service/.env
+  gateway:
+    build:
+      dockerfile: Dockerfile
+      context: ./gateway
+    container_name: gateway
+    ports:
+        - 8000:8000
+    restart: always
+    depends_on:
+        - auth_service
+        - user_service
+        - post_service
+        - timeline_service 
+
+  
