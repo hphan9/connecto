@@ -14,8 +14,9 @@ ENV PORT=8002
 COPY . .
 RUN true
 
+# We run our service on port 8002
+EXPOSE 8002
 # Start the container by running our server
 CMD [ "npm", "start" ]
 
-# We run our service on port 8002
-EXPOSE 8002
+

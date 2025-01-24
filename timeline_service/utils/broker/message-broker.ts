@@ -2,10 +2,10 @@ import { Consumer, Kafka, logLevel, Partitioners, Producer } from "kafkajs";
 import { PublishType } from "./broker.type";
 
 //configuration
-const BROKERS = [process.env.BROKER_1 || "localhost:9092"];
-
+const BROKERS = [process.env.BROKER_1 || "kafka:9092"];
+console.log(BROKERS)
 const kafka = new Kafka({
-  clientId: "postservice",
+  clientId: "Timeline_service",
   brokers: BROKERS,
   logLevel: logLevel.INFO,
 });
