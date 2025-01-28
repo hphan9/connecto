@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/cookie-parser": "^1.4.8",
+    "@types/dotenv": "^8.2.3",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "22.10.5",
     "axios": "^1.7.9",

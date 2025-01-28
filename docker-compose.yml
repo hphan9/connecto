@@ -58,6 +58,7 @@ services:
     depends_on:
       - mongodb
       - kafka
+      - auth_service
     volumes:
       - .:/app
       - /app/post_service/node_modules

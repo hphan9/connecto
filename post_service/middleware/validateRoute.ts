@@ -6,7 +6,7 @@ import axios from "axios";
 const AUTH_SERVICE_BASE_URL =
   process.env.AUTH_SERVICE_BASE_URL || "http://localhost:8001";
 export const validateRoute = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -16,7 +16,8 @@ export const validateRoute = async (
       res.status(401).json({ error: "You need to login first" });
       return;
     }
-    const response = await axios.get(`${AUTH_SERVICE_BASE_URL}/auth/validate`, {
+    console.log(`${AUTH_SERVICE_BASE_URL}/validate`);
+    const response = await axios.get(`${AUTH_SERVICE_BASE_URL}/validate`, {
       headers: {
         Authorization: token,
       },

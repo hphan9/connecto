@@ -9,7 +9,7 @@ import { MessageBroker } from "../utils/broker";
 import { PostEvent } from "../types/subscription.type";
 import path from "path";
 
-export const getAllPosts = async (req: Request, res: Response) => {
+export const getAllPosts = async (req: CustomRequest, res: Response) => {
   try {
     //populate is method to get other infor from other table/document
     const allPosts = await Post.find()
@@ -26,7 +26,7 @@ export const getAllPosts = async (req: Request, res: Response) => {
   }
 };
 
-export const getLikedPosts = async (req: Request, res: Response) => {
+export const getLikedPosts = async (req: CustomRequest, res: Response) => {
   try {
     const { id: userId } = req.params;
     var posts = await Post.find({ likes: { $eq: userId } })
@@ -49,9 +49,9 @@ export const getLikedPosts = async (req: Request, res: Response) => {
   }
 };
 
-export const getFollowingPosts = async (req: Request, res: Response) => {
+export const getFollowingPosts = async (req: CustomRequest, res: Response) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user?._id);
     const following = user?.following;
     const followingPosts = await Post.find({ user: { $in: following } })
       .sort({ createdAt: -1 })
@@ -106,7 +106,7 @@ export const getUserPosts = async (req: Request, res: Response) => {
   }
 };
 
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (req: CustomRequest, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -124,7 +124,7 @@ export const createPost = async (req: Request, res: Response) => {
     }
 
     const newPost = new Post({
-      user: user._id,
+      user: user?._id,
       text: text,
       img: img,
     });
@@ -135,11 +135,11 @@ export const createPost = async (req: Request, res: Response) => {
       topic: "PostEvents",
       event: PostEvent.CREATE_POST,
       message: {
-        userId:user._id.toString(),
+        userId:user?._id.toString(),
         id: newPost._id.toString(),
         post:newPost
       },
-      headers: { userId: user._id.toString() },
+      headers: { userId: user?._id.toString() },
     });
 
     res.status(201).json({ newPost });
@@ -149,7 +149,7 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const likeUnlikePost = async (req: Request, res: Response) => {
+export const likeUnlikePost = async (req: CustomRequest, res: Response) => {
   try {
     const { id } = req.params;
     const post = await Post.findById(id);
@@ -157,7 +157,7 @@ export const likeUnlikePost = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Post not found" });
       return;
     }
-    const userId = new Types.ObjectId(req.user._id);
+    const userId = new Types.ObjectId(req.user?._id);
     const isLikeExist = post.likes.includes(userId);
     let updatedLikes = post.likes;
     if (isLikeExist) {
@@ -185,7 +185,7 @@ export const likeUnlikePost = async (req: Request, res: Response) => {
   }
 };
 
-export const commentOnPost = async (req: Request, res: Response) => {
+export const commentOnPost = async (req: CustomRequest, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     res.status(422).send(errors);
@@ -199,7 +199,7 @@ export const commentOnPost = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Post not found" });
       return;
     }
-    post.comments.push({ user: req.user._id, text: comment });
+    post.comments.push({ user: req.user?._id, text: comment });
     await post.save();
     res.status(200).json(post.comments);
   } catch (error: any) {
@@ -208,14 +208,14 @@ export const commentOnPost = async (req: Request, res: Response) => {
   }
 };
 
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (req: CustomRequest, res: Response) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
       res.status(404).json({ error: "Post not found" });
       return;
     }
-    if (post.user._id.toString() !== req.user._id) {
+    if (post.user._id.toString() !== req.user?._id) {
       res
         .status(401)
         .json({ error: "You are not authorized to delete this post" });
