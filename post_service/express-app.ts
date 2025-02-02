@@ -1,11 +1,10 @@
 import express from "express";
 import postRoutes from "./routes/post.routes";
-import connectMongoDB from "./db/connectMongoDB";
 import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
 import { InitializeBroker } from "./services/broker.services";
 
-export const ExpressApp = async () => {
+export const ExpressApp = async (connectMongoDB:Function) => {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,

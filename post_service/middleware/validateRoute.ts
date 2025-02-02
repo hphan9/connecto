@@ -16,7 +16,6 @@ export const validateRoute = async (
       res.status(401).json({ error: "You need to login first" });
       return;
     }
-    console.log(`${AUTH_SERVICE_BASE_URL}/validate`);
     const response = await axios.get(`${AUTH_SERVICE_BASE_URL}/validate`, {
       headers: {
         Authorization: token,
