@@ -8,27 +8,24 @@ import { v2 as cloudinary } from "cloudinary";
 import { MessageBroker } from "../utils/broker";
 import { PostEvent } from "../types/subscription.type";
 import path from "path";
+import { AuthUser } from "../global";
+import Notification from "../models/notification.model";
 
-export const getAllPosts = async (req: CustomRequest, res: Response) => {
+export const fetchPosts = async () => {
   try {
     //populate is method to get other infor from other table/document
     const allPosts = await Post.find()
       .sort({ created: 1 })
       .populate({ path: "user", select: "-password" });
-    if (allPosts.length === 0) {
-      res.status(200).json([]);
-      return;
-    }
-    res.status(200).json(allPosts);
-  } catch (error) {
+    return allPosts;
+  } catch (error: any) {
     console.log(`Error get all post ${error}`);
-    res.status(500).json({ error: "Server error" });
+    throw new Error(error);
   }
 };
 
-export const getLikedPosts = async (req: CustomRequest, res: Response) => {
+export const fetchLikedPosts = async (userId: string) => {
   try {
-    const { id: userId } = req.params;
     var posts = await Post.find({ likes: { $eq: userId } })
       .populate({
         path: "user",
@@ -38,20 +35,16 @@ export const getLikedPosts = async (req: CustomRequest, res: Response) => {
         path: "comments.user",
         select: "-password",
       });
-    if (posts.length === 0) {
-      res.status(200).json([]);
-      return;
-    }
-    res.status(200).json(posts);
+    return posts;
   } catch (error) {
     console.log(`Error Get Liked posts ${error}`);
-    res.status(500).json({ error: "Server error" });
+    throw error;
   }
 };
 
-export const getFollowingPosts = async (req: CustomRequest, res: Response) => {
+export const fetchFollowingPosts = async (userId: string) => {
   try {
-    const user = await User.findById(req.user?._id);
+    const user = await User.findById(userId);
     const following = user?.following;
     const followingPosts = await Post.find({ user: { $in: following } })
       .sort({ createdAt: -1 })
@@ -63,30 +56,23 @@ export const getFollowingPosts = async (req: CustomRequest, res: Response) => {
         path: "comments.user",
         select: "-password",
       });
-    res.status(200).json(followingPosts);
+    return followingPosts;
   } catch (error) {
-    console.log(`Error get following posts ${error}`);
-    res.status(500).json({ error: "Server error" });
+    throw error;
   }
 };
 
-export const getPostConsumer = async (req: Request, res: Response) => {
+export const fetchUser = async (username: string) => {
   try {
-    res.status(200).json("test");
+    return await User.findOne({ username: username });
   } catch (error) {
-    console.log(`Error get all post ${error}`);
-    res.status(500).json({ error: "Server error" });
+    throw error;
   }
 };
-export const getUserPosts = async (req: Request, res: Response) => {
-  const { username } = req.params;
+
+export const fetchUserPosts = async (userId: Types.ObjectId) => {
   try {
-    const user = await User.findOne({ username: username });
-    if (!user) {
-      res.status(400).json({ error: "User not found" });
-      return;
-    }
-    const posts = await Post.find({ user: user._id })
+    const posts = await Post.find({ user: userId })
       .populate({
         path: "user",
         select: "-password",
@@ -95,29 +81,16 @@ export const getUserPosts = async (req: Request, res: Response) => {
         path: "comments.user",
         select: "-password",
       });
-    if (posts.length === 0) {
-      res.status(200).json([]);
-      return;
-    }
-    res.status(200).json(posts);
+
+    return posts;
   } catch (error) {
     console.log(`Error get user posts ${error}`);
-    res.status(500).json({ error: "Server error" });
+    throw error;
   }
 };
 
-export const createPost = async (req: CustomRequest, res: Response) => {
+export const saveNewPost = async (text: string, img: any, user: AuthUser) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(422).send(errors);
-      return;
-    }
-
-    const { text } = req.body;
-    let { img } = req.body;
-    const user = req.user;
-
     if (img) {
       const uploadedResponse = await cloudinary.uploader.upload(img);
       img = uploadedResponse.secure_url;
@@ -135,29 +108,26 @@ export const createPost = async (req: CustomRequest, res: Response) => {
       topic: "PostEvents",
       event: PostEvent.CREATE_POST,
       message: {
-        userId:user?._id.toString(),
+        userId: user?._id.toString(),
         id: newPost._id.toString(),
-        post:newPost
+        post: newPost,
       },
       headers: { userId: user?._id.toString() },
     });
 
-    res.status(201).json({ newPost });
+    return newPost;
   } catch (error: any) {
     console.log(`Error save new post ${error.message}`);
-    res.status(500).json({ error: "Server error" });
+    throw error;
   }
 };
 
-export const likeUnlikePost = async (req: CustomRequest, res: Response) => {
+export const modifyPostLike = async (id: string, userId: Types.ObjectId) => {
   try {
-    const { id } = req.params;
     const post = await Post.findById(id);
     if (!post) {
-      res.status(400).json({ error: "Post not found" });
-      return;
+      throw new Error("Post not found");
     }
-    const userId = new Types.ObjectId(req.user?._id);
     const isLikeExist = post.likes.includes(userId);
     let updatedLikes = post.likes;
     if (isLikeExist) {
@@ -170,66 +140,56 @@ export const likeUnlikePost = async (req: CustomRequest, res: Response) => {
       // likepost
       await post.updateOne({ $push: { likes: userId } });
       //todo: remove notification from post service
-      /*       const notification = new Notification({
+      const notification = new Notification({
         type: "like",
         from: userId,
         to: post.user,
       });
-      await notification.save(); */
+      await notification.save();
       updatedLikes.push(userId);
     }
-    res.status(200).json(updatedLikes);
+    return updatedLikes;
   } catch (error: any) {
-    console.log(`Error like unlike post ${error.message}`);
-    res.status(500).json({ error: "Server error" });
+    throw error;
   }
 };
 
-export const commentOnPost = async (req: CustomRequest, res: Response) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(422).send(errors);
-    return;
-  }
+export const updateCommentOnPost = async (
+  id: string,
+  comment: string,
+  userId: string
+) => {
   try {
-    const { text: comment } = req.body;
-    const { id } = req.params;
     const post = await Post.findById(id);
     if (!post) {
-      res.status(400).json({ error: "Post not found" });
-      return;
+      throw new Error("Post not found");
     }
-    post.comments.push({ user: req.user?._id, text: comment });
+    post.comments.push({ user: userId, text: comment });
     await post.save();
-    res.status(200).json(post.comments);
+    return post.comments;
   } catch (error: any) {
     console.log(`Error comment post ${error.message}`);
-    res.status(500).json({ error: "Server error" });
+    throw error;
   }
 };
 
-export const deletePost = async (req: CustomRequest, res: Response) => {
+export const removePost = async (id: string, userId: string) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(id);
     if (!post) {
-      res.status(404).json({ error: "Post not found" });
-      return;
+      throw new Error("Post not found");
     }
-    if (post.user._id.toString() !== req.user?._id) {
-      res
-        .status(401)
-        .json({ error: "You are not authorized to delete this post" });
-      return;
+    if (post.user._id.toString() !== userId) {
+      throw new Error("You are not allowed to delete this post");
     }
     if (post.img) {
       // we have to delete post img from cloudinary
       const imgId = post.img.split("/").pop()?.split(".")[0];
       imgId && (await cloudinary.uploader.destroy(imgId));
     }
-    await Post.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Post deleted successfully" });
+    await Post.findByIdAndDelete(id);
   } catch (error) {
     console.log(`Error delete  post ${error}`);
-    res.status(500).json({ error: "Server error" });
+    throw error;
   }
 };

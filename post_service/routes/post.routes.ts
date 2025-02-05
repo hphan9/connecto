@@ -9,7 +9,7 @@ import {
   getLikedPosts,
   getUserPosts,
   likeUnlikePost,
-} from "../services/post.service";
+} from "../controllers/post.controller";
 import { body } from "express-validator";
 const router = express.Router();
 

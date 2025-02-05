@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import {Request} from 'express';
-interface AuthUser {
+import { Request } from "express";
+export interface AuthUser {
   username: string;
   _id: string;
   email: string;
@@ -8,5 +8,5 @@ interface AuthUser {
 export {};
 // todo check the namespace again
 declare global {
-  type CustomRequest = Request & { user?: AuthUser }
+  type CustomRequest = Request & { user?: AuthUser };
 }
